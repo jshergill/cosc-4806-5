@@ -6,5 +6,7 @@ class Reports extends Controller {
             header("Location: /home");
             exit;
         }
+        $reminder = $this->model('Reminder');
+        $user = $this->model('User');
     }
 }
