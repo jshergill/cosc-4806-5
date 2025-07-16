@@ -4,8 +4,8 @@
     <h2 class="mb-4">Reports</h2>
 
     <div class="card mb-4">
-        <div class="card-header bg-primary text-white">
-            All Reminders
+        <div class="card-header text-black">
+          <strong> Reminders </strong> 
         </div>
         <div class="card-body">
             <?php if (!empty($data['all_reminders'])): ?>
@@ -29,21 +29,40 @@
                         <?php endforeach; ?>
                     </tbody>
                 </table>
-            <?php else: ?>
-                <p>No reminders found.</p>
-            <?php endif; ?>
         </div>
     </div>
     
     <div class="card mb-4">
-        <div class="card-header bg-success text-white">
-            User with Most Reminders
+        <div class="card-header backgroundcolor-black text-white">
+          <strong>  User with highest Reminders</strong>
         </div>
         <div class="card-body">
-            <?php if (!empty($data['top_user'])): ?>
-                <p><strong><?= htmlspecialchars($data['top_user']['username']) ?></strong> with <strong><?= $data['top_user']['total'] ?></strong> reminders.</p>
-            <?php else: ?>
-                <p>No data available.</p>
-            <?php endif; ?>
+            <?php if (!empty($data['user_with_most_reminders'])): ?>
+                <p><strong><?= htmlspecialchars($data['user_with_most_reminders']['username']) ?></strong> with <strong><?= $data['user_with_most_reminders']['total'] ?></strong> reminders.</p>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header bg-info text-white">
+            <strong>Total Logins</strong>
+        </div>
+        <div class="card-body">
+            <?php if (!empty($data['get_login_counts'])): ?>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Total Logins by users</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($data['get_login_counts'] as $row): ?>
+                            <tr>
+                                <td><?= htmlspecialchars($row['username']) ?></td>
+                                <td><?= $row['total'] ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
         </div>
     </div>
