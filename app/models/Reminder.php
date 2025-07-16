@@ -12,6 +12,19 @@ class Reminder {
         $rows = $statement->fetchAll(PDO::FETCH_ASSOC);
         return $rows;
     }
+    public function user_with_most_reminders() {
+        $db = db_connect();
+        $stmt = $db->prepare("
+            SELECT username, COUNT(*) as total 
+            FROM Reminders 
+            JOIN users ON Reminders.user_id = users.ID 
+            GROUP BY user_id 
+            ORDER BY total DESC 
+            LIMIT 1;
+        ");
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
     public function create_reminder($subject) {
         $db = db_connect();
         $stmt = $db->prepare("INSERT INTO Reminders (user_id, subject, created_at) VALUES (:user_id, :subject, NOW())");
