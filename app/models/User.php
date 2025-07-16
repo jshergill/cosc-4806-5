@@ -46,11 +46,18 @@ class User {
 			die;
 		}
     }
+  private function logAttempt($username, $status) {
+  $db = db_connect();
+  $stmt = $db->prepare("INSERT INTO logins (username, attempt) VALUES (:username, :attempt)");
+  $stmt->bindValue(':username', $username);
+  $stmt->bindValue(':attempt', $status === 'success' ? 1 : 0, PDO::PARAM_INT);
+  $stmt->execute();
+  }
   public function get_login_counts() {
           $db = db_connect();
           $stmt = $db->prepare("
               SELECT username, COUNT(*) AS total 
-              FROM login_logs 
+              FROM logins
               GROUP BY username;
           ");
           $stmt->execute();
