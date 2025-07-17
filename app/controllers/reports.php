@@ -11,6 +11,7 @@ class Reports extends Controller {
         $data = [
             'all_reminders' => $reminder->all_reminders(),
             'user_with_most_reminders' => $reminder->user_with_most_reminders(),
+            'user_id_with_most_reminders' => $reminder->user_id_with_most_reminders(),
             'get_login_counts' => $user->get_login_counts()
         ];
 
