@@ -7,11 +7,17 @@ class Reminder {
 
     public function all_reminders() {
         $db = db_connect();
-        $statement = $db->prepare("SELECT * FROM Reminders;");
-        $statement->execute();
-        $rows = $statement->fetchAll(PDO::FETCH_ASSOC);
-        return $rows;
+        $stmt = $db->prepare("
+            SELECT ID AS id, user_id, subject, created_at, completed
+            FROM Reminders
+            WHERE user_id = :user_id
+            ORDER BY created_at DESC
+        ");
+        $stmt->bindValue(':user_id', $_SESSION['user_id'], PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
     public function user_with_most_reminders() {
         $db = db_connect();
         $stmt = $db->prepare("
@@ -45,27 +51,27 @@ class Reminder {
         $stmt->bindValue(':subject', $subject);
         return $stmt->execute();
     }
-    public function reminder_by_id($ID) {
+    public function reminder_by_id($id) {
         $db = db_connect();
-        $stmt = $db->prepare("SELECT * FROM Reminders WHERE ID = :ID AND user_id = :user_id");
-         $stmt->bindValue(':user_id', $_SESSION['user_id']); 
-        $stmt->bindValue(':ID', $ID);
+        $stmt = $db->prepare("SELECT * FROM Reminders WHERE id = :id AND user_id = :user_id");
+        $stmt->bindValue(':id', $id);
+        $stmt->bindValue(':user_id', $_SESSION['user_id']); 
         $stmt->execute();
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
-    public function update_reminder($ID, $subject) {
+    public function update_reminder($id, $subject) {
         $db = db_connect();
-        $stmt = $db->prepare("UPDATE Reminders SET subject = :subject WHERE ID = :ID AND user_id = :user_id");
-         $stmt->bindValue(':user_id', $_SESSION['user_id']); 
+        $stmt = $db->prepare("UPDATE Reminders SET subject = :subject WHERE id = :id AND user_id = :user_id");
         $stmt->bindValue(':subject', $subject);
-        $stmt->bindValue(':ID', $ID);
+        $stmt->bindValue(':id', $id);
+        $stmt->bindValue(':user_id', $_SESSION['user_id']); 
         return $stmt->execute();
     }
-    public function delete_reminder($ID) {
+    public function delete_reminder($id) {
         $db = db_connect();
-        $stmt = $db->prepare("DELETE FROM Reminders WHERE ID = :ID AND user_id = :user_id");
-         $stmt->bindValue(':user_id', $_SESSION['user_id']); 
-        $stmt->bindValue(':ID', $ID);
+        $stmt = $db->prepare("DELETE FROM Reminders WHERE id = :id AND user_id = :user_id");
+        $stmt->bindValue(':id', $id);
+        $stmt->bindValue(':user_id', $_SESSION['user_id']); 
         return $stmt->execute();
     }
 }

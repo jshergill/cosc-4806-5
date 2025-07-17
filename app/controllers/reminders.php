@@ -1,50 +1,51 @@
 <?php
-
 class Reminders extends Controller {
 
     public function index() {
-        $reminder = $this->model('Reminder');
-        $list_of_reminders = $reminder->all_reminders();
-        $this->view('reminders/index', ['reminders' => $list_of_reminders]);
+        $model = $this->model('Reminder');
+        $list  = $model->all_reminders(); 
+        $this->view('reminders/index', ['reminders' => $list]);
     }
 
     public function create() {
-        $reminder = $this->model('Reminder');
-
+        $model = $this->model('Reminder');
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $subject = $_POST['subject'];
-            $reminder->create_reminder($subject);
+            $subject = trim($_POST['subject'] ?? '');
+            if ($subject !== '') {
+                $model->create_reminder($subject);
+                $_SESSION['success'] = "Reminder created.";
+            }
             header('Location: /reminders');
             exit;
         }
-
         $this->view('reminders/create');
     }
-    public function update($ID) {
-        $reminder = $this->model('Reminder');
 
+    public function update($id) {
+        $model = $this->model('Reminder');
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $subject = $_POST['subject'];
-            $reminder->update_reminder($ID, $subject);
+            $subject = trim($_POST['subject'] ?? '');
+            if ($subject !== '') {
+                $model->update_reminder($id, $subject);
+                $_SESSION['success'] = "Reminder updated.";
+            }
             header('Location: /reminders');
             exit;
         }
-
-        // Fetch the reminder and pass it to the view
-        $reminderData = $reminder->reminder_by_id($ID);
-        $this->view('reminders/edit', ['reminder' => $reminderData]);
+        $rec = $model->reminder_by_id($id);
+        $this->view('reminders/update', ['reminder' => $rec]);
     }
 
-
-     public function delete($ID) {
-         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-             $reminder = $this->model('Reminder');
-             $reminder->delete_reminder($ID);
-             header('Location: /reminders');
-             exit;
-         } else {
-             die('Invalid request method');
-         }
-     }
-
+    public function delete($id) {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $model = $this->model('Reminder');
+            $model->delete_reminder($id);
+            $_SESSION['success'] = "Reminder deleted.";
+            header('Location: /reminders');
+            exit;
+        }
+        // If someone GETs /reminders/delete/ID, just bounce.
+        header('Location: /reminders');
+        exit;
+    }
 }
